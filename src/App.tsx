@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { Bike, Flame, Leaf, MapPin, Sandwich, Star, Users } from "lucide-react";
+import { Bike, Flame, Leaf, MapPin, Quote, Sandwich, Star, Users } from "lucide-react";
+import { useMemo, useState } from "react";
+import { CmsPreview } from "./components/CmsPreview";
 import { Footer } from "./components/Footer";
 import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { Gallery } from "./components/Gallery";
@@ -7,9 +9,13 @@ import { Hero } from "./components/Hero";
 import { LocationCard } from "./components/LocationCard";
 import { MenuCard } from "./components/MenuCard";
 import { Navbar } from "./components/Navbar";
+import { OpenStatus } from "./components/OpenStatus";
+import { PrintedMenu } from "./components/PrintedMenu";
 import { SectionTitle } from "./components/SectionTitle";
+import { TodaysSpecial } from "./components/TodaysSpecial";
 import { locations } from "./data/locations";
-import { menuItems } from "./data/menu";
+import { menuFilters, menuItems, type MenuFilter } from "./data/menu";
+import { reviews } from "./data/reviews";
 import { whatsappUrl } from "./lib/contact";
 
 const whyItems = [
@@ -21,42 +27,69 @@ const whyItems = [
   { title: "Hangout spot", icon: Users, text: "Urban, easy, and made for friends who arrive hungry." },
 ];
 
-const reviews = [
-  {
-    name: "Aline M.",
-    text: "The cheeseburger is messy in the best way. Fast delivery, big flavor, zero regrets.",
-  },
-  {
-    name: "Kevin N.",
-    text: "Burger Bros has that Kigali hangout energy. Tacos, fries, sauces, everything lands.",
-  },
-  {
-    name: "Sarah K.",
-    text: "The katsu burger is crispy, juicy, and different from anything else around Kisimenti.",
-  },
-];
-
 function App() {
+  if (window.location.pathname === "/site/cms") {
+    return <CmsPreview />;
+  }
+
+  return <PublicSite />;
+}
+
+function PublicSite() {
+  const [activeFilter, setActiveFilter] = useState<MenuFilter>("All");
+  const filteredMenuItems = useMemo(
+    () =>
+      activeFilter === "All"
+        ? menuItems
+        : menuItems.filter((item) => item.category === activeFilter),
+    [activeFilter],
+  );
+
   return (
     <div className="min-h-screen bg-cream text-charcoal">
       <Navbar />
       <main>
         <Hero />
+        <section className="px-4 pb-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl justify-start">
+            <OpenStatus />
+          </div>
+        </section>
+
+        <TodaysSpecial />
 
         <section id="menu" className="px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <SectionTitle
               eyebrow="Featured menu"
               title="Stacked, sauced, ready."
-              description="A tight lineup of Burger Bros favorites. Prices are placeholders and can be edited from one menu data file."
+              description="Pick your craving, check what is available, and order straight on WhatsApp."
             />
+            <div className="mb-8 flex flex-wrap justify-center gap-3">
+              {menuFilters.map((filter) => (
+                <button
+                  key={filter}
+                  type="button"
+                  onClick={() => setActiveFilter(filter)}
+                  className={`rounded-full border px-5 py-3 text-sm font-black uppercase tracking-[0.12em] transition ${
+                    activeFilter === filter
+                      ? "border-charcoal bg-charcoal text-white"
+                      : "border-charcoal/15 bg-white text-charcoal hover:border-chili hover:text-chili"
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {menuItems.map((item, index) => (
+              {filteredMenuItems.map((item, index) => (
                 <MenuCard key={item.name} item={item} index={index} />
               ))}
             </div>
           </div>
         </section>
+
+        <PrintedMenu />
 
         <section id="why" className="bg-white px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
@@ -113,6 +146,7 @@ function App() {
               </h2>
             </div>
             <div className="rounded-[1.5rem] border border-white/10 bg-white/8 p-6">
+              <OpenStatus />
               <p className="font-display text-4xl font-black text-cheddar">11:30 AM - 11:30 PM</p>
               <p className="mt-3 text-lg font-semibold leading-7 text-white/72">
                 Open every day with delivery availability across Kigali. Message us on WhatsApp for the fastest order flow.
@@ -126,27 +160,36 @@ function App() {
         <section className="bg-white px-4 py-20 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <SectionTitle
-              eyebrow="Social proof"
-              title="The city talks when the food hits."
-              description="Placeholder reviews ready to swap with real customer quotes."
+              eyebrow="Google reviews"
+              title="Kigali has spoken."
+              description="Real customer reviews from people who came hungry and left with a Burger Bros story."
             />
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               {reviews.map((review, index) => (
                 <motion.article
                   key={review.name}
-                  className="rounded-[1.35rem] border border-charcoal/10 bg-cream p-6 shadow-sm"
+                  className="flex h-full flex-col rounded-[1.35rem] border border-charcoal/10 bg-cream p-6 shadow-sm"
                   initial={{ opacity: 0, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ delay: index * 0.06, duration: 0.45 }}
                 >
+                  <Quote className="mb-4 text-chili" size={28} />
                   <div className="mb-4 flex gap-1 text-cheddar">
                     {Array.from({ length: 5 }).map((_, starIndex) => (
                       <Star key={starIndex} size={18} fill="currentColor" />
                     ))}
                   </div>
-                  <p className="text-base font-semibold leading-7 text-charcoal/74">"{review.text}"</p>
+                  <p className="flex-1 text-base font-semibold leading-7 text-charcoal/74">"{review.text}"</p>
                   <p className="mt-5 font-display text-xl font-black text-charcoal">{review.name}</p>
+                  <a
+                    href={review.sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 text-sm font-black uppercase tracking-[0.12em] text-chili hover:text-charcoal"
+                  >
+                    Google review
+                  </a>
                 </motion.article>
               ))}
             </div>
@@ -180,7 +223,7 @@ function App() {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a
-                  href={whatsappUrl()}
+                  href={whatsappUrl("Hi Burger Bros Kigali, I’m craving Burger Bros. Please send today’s available menu and delivery options.")}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-charcoal transition hover:-translate-y-1 hover:bg-cheddar"
                 >
                   Order on WhatsApp
