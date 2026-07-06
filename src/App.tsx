@@ -33,25 +33,27 @@ const whyItems = [
 
 function App() {
   const pathname = window.location.pathname.replace(/\/$/, "");
+  const page = new URLSearchParams(window.location.search).get("page");
 
-  if (pathname === "/cms") {
+  if (pathname === "/cms" || page === "cms") {
     return <CmsPreview />;
   }
 
   return (
     <CartProvider>
-      <AppRoutes pathname={pathname} />
+      <AppRoutes page={page} pathname={pathname} />
     </CartProvider>
   );
 }
 
-function AppRoutes({ pathname }: { pathname: string }) {
+function AppRoutes({ page, pathname }: { page: string | null; pathname: string }) {
   const [cartOpen, setCartOpen] = useState(false);
   const { totalItems } = useCart();
+  const isMenuPage = pathname === "/menu" || page === "menu";
 
   return (
     <>
-      {pathname === "/menu" ? (
+      {isMenuPage ? (
         <div className="min-h-screen bg-cream text-charcoal">
           <Navbar cartCount={totalItems} onCartOpen={() => setCartOpen(true)} />
           <MenuPage onCartOpen={() => setCartOpen(true)} />

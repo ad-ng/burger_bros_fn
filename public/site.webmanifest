@@ -2,7 +2,7 @@
   "name": "Burger Bros Kigali",
   "short_name": "Burger Bros",
   "description": "Gourmet burgers, tacos, combos, and WhatsApp ordering in Kigali.",
-  "start_url": "/menu",
+  "start_url": "/?page=menu",
   "scope": "/",
   "display": "standalone",
   "background_color": "#FFF7E8",

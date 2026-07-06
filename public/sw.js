@@ -2,6 +2,7 @@ const cacheName = "burger-bros-static-v2";
 const staticAssets = [
   "/",
   "/menu",
+  "/?page=menu",
   "/site.webmanifest",
   "/images/hero-burger-real.webp",
   "/images/menu-cheese-box.webp",

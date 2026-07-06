@@ -65,7 +65,7 @@ export function MenuExplorer({ compact = false, variant = "full", onAddToCart }:
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
-              href="/menu"
+              href="/?page=menu"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-charcoal px-7 py-4 text-sm font-black uppercase tracking-[0.12em] text-white transition hover:-translate-y-1 hover:bg-chili"
             >
               View Full Menu

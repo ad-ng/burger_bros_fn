@@ -1,4 +1,4 @@
-import { MapPin, Minus, Plus, Send, ShoppingBag, Trash2, X } from "lucide-react";
+import { ArrowLeft, MapPin, Minus, Plus, Send, ShoppingBag, Trash2, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { cartOrderUrl, useCart } from "../context/CartContext";
 import { locations } from "../data/locations";
@@ -51,12 +51,13 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
           <div>
             <p className="text-xs font-black uppercase tracking-[0.16em] text-chili">WhatsApp cart</p>
             <h2 className="font-display text-3xl font-black text-charcoal">{totalItems} item{totalItems === 1 ? "" : "s"}</h2>
+            <p className="mt-1 text-xs font-bold text-charcoal/50">Closing keeps your cart saved.</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="grid h-11 w-11 place-items-center rounded-full border border-charcoal/10 bg-cream text-charcoal"
-            aria-label="Close cart"
+            aria-label="Continue ordering"
           >
             <X size={22} />
           </button>
@@ -81,6 +82,14 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                     Order Again
                   </a>
                 ) : null}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="mt-3 inline-flex items-center justify-center gap-2 rounded-full border border-charcoal/10 bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-charcoal"
+                >
+                  <ArrowLeft size={17} />
+                  Browse Menu
+                </button>
               </div>
             </div>
           ) : (
@@ -198,6 +207,14 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
             <span className="text-sm font-black uppercase tracking-[0.14em] text-charcoal/55">Estimated total</span>
             <span className="font-display text-3xl font-black text-chili">{formatRwf(totalPrice)}</span>
           </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-charcoal/10 bg-cream px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-charcoal transition hover:bg-cheddar"
+          >
+            <ArrowLeft size={17} />
+            Continue Ordering
+          </button>
           <div className="grid grid-cols-[1fr_auto] gap-3">
             <a
               href={cartOrderUrl(orderMessage)}
