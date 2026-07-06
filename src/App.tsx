@@ -28,7 +28,9 @@ const whyItems = [
 ];
 
 function App() {
-  if (window.location.pathname === "/site/cms") {
+  const pathname = window.location.pathname.replace(/\/$/, "");
+
+  if (pathname === "/cms") {
     return <CmsPreview />;
   }
 
