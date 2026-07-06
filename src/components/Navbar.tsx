@@ -1,15 +1,20 @@
 import { Menu, ShoppingBag } from "lucide-react";
 import { useState } from "react";
-import { whatsappUrl } from "../lib/contact";
 
 const links = [
-  { label: "Menu", href: "#menu" },
-  { label: "Why us", href: "#why" },
-  { label: "Locations", href: "#locations" },
-  { label: "Gallery", href: "#gallery" },
+  { label: "Home", href: "/" },
+  { label: "Popular", href: "/#menu" },
+  { label: "Full Menu", href: "/menu" },
+  { label: "Locations", href: "/#locations" },
+  { label: "Gallery", href: "/#gallery" },
 ];
 
-export function Navbar() {
+type NavbarProps = {
+  cartCount: number;
+  onCartOpen: () => void;
+};
+
+export function Navbar({ cartCount, onCartOpen }: NavbarProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -38,13 +43,14 @@ export function Navbar() {
           ))}
         </div>
 
-        <a
-          href={whatsappUrl()}
+        <button
+          type="button"
+          onClick={onCartOpen}
           className="hidden items-center gap-2 rounded-full bg-chili px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-white shadow-glow transition hover:-translate-y-0.5 hover:bg-charcoal md:flex"
         >
           <ShoppingBag size={18} />
-          Order
-        </a>
+          Cart {cartCount > 0 ? `(${cartCount})` : ""}
+        </button>
 
         <button
           type="button"
@@ -69,6 +75,16 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                onCartOpen();
+              }}
+              className="rounded-full bg-chili px-4 py-3 text-sm font-black uppercase tracking-[0.14em] text-white shadow-sm"
+            >
+              Cart {cartCount > 0 ? `(${cartCount})` : ""}
+            </button>
           </div>
         </div>
       ) : null}

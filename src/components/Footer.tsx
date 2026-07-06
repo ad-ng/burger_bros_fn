@@ -14,10 +14,11 @@ export function Footer() {
         <div>
           <h3 className="text-sm font-black uppercase tracking-[0.18em] text-cheddar">Quick links</h3>
           <div className="mt-4 grid gap-2 text-sm font-semibold text-white/72">
-            <a href="#menu" className="hover:text-white">Menu</a>
-            <a href="#locations" className="hover:text-white">Locations</a>
-            <a href="#hours" className="hover:text-white">Opening hours</a>
-            <a href="#gallery" className="hover:text-white">Gallery</a>
+            <a href="/#menu" className="hover:text-white">Popular picks</a>
+            <a href="/menu" className="hover:text-white">Full menu</a>
+            <a href="/#locations" className="hover:text-white">Locations</a>
+            <a href="/#hours" className="hover:text-white">Opening hours</a>
+            <a href="/#gallery" className="hover:text-white">Gallery</a>
           </div>
         </div>
         <div>

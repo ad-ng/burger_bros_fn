@@ -1,20 +1,24 @@
 import { motion } from "framer-motion";
 import { Bike, Flame, Leaf, MapPin, Quote, Sandwich, Star, Users } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { CartDrawer } from "./components/CartDrawer";
 import { CmsPreview } from "./components/CmsPreview";
 import { Footer } from "./components/Footer";
 import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { Gallery } from "./components/Gallery";
 import { Hero } from "./components/Hero";
+import { InstallPrompt } from "./components/InstallPrompt";
 import { LocationCard } from "./components/LocationCard";
-import { MenuCard } from "./components/MenuCard";
+import { MenuExplorer } from "./components/MenuExplorer";
+import { MenuPage } from "./components/MenuPage";
 import { Navbar } from "./components/Navbar";
+import { OfflineNotice } from "./components/OfflineNotice";
 import { OpenStatus } from "./components/OpenStatus";
 import { PrintedMenu } from "./components/PrintedMenu";
 import { SectionTitle } from "./components/SectionTitle";
 import { TodaysSpecial } from "./components/TodaysSpecial";
+import { CartProvider, useCart } from "./context/CartContext";
 import { locations } from "./data/locations";
-import { menuFilters, menuItems, type MenuFilter } from "./data/menu";
 import { reviews } from "./data/reviews";
 import { whatsappUrl } from "./lib/contact";
 
@@ -34,22 +38,43 @@ function App() {
     return <CmsPreview />;
   }
 
-  return <PublicSite />;
+  return (
+    <CartProvider>
+      <AppRoutes pathname={pathname} />
+    </CartProvider>
+  );
 }
 
-function PublicSite() {
-  const [activeFilter, setActiveFilter] = useState<MenuFilter>("All");
-  const filteredMenuItems = useMemo(
-    () =>
-      activeFilter === "All"
-        ? menuItems
-        : menuItems.filter((item) => item.category === activeFilter),
-    [activeFilter],
-  );
+function AppRoutes({ pathname }: { pathname: string }) {
+  const [cartOpen, setCartOpen] = useState(false);
+  const { totalItems } = useCart();
 
   return (
+    <>
+      {pathname === "/menu" ? (
+        <div className="min-h-screen bg-cream text-charcoal">
+          <Navbar cartCount={totalItems} onCartOpen={() => setCartOpen(true)} />
+          <MenuPage onCartOpen={() => setCartOpen(true)} />
+          <Footer />
+          <FloatingWhatsApp cartCount={totalItems} onCartOpen={() => setCartOpen(true)} />
+          <InstallPrompt />
+          <OfflineNotice />
+        </div>
+      ) : (
+        <PublicSite
+          cartCount={totalItems}
+          onCartOpen={() => setCartOpen(true)}
+        />
+      )}
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+    </>
+  );
+}
+
+function PublicSite({ cartCount, onCartOpen }: { cartCount: number; onCartOpen: () => void }) {
+  return (
     <div className="min-h-screen bg-cream text-charcoal">
-      <Navbar />
+      <Navbar cartCount={cartCount} onCartOpen={onCartOpen} />
       <main>
         <Hero />
         <section className="px-4 pb-4 sm:px-6 lg:px-8">
@@ -60,36 +85,7 @@ function PublicSite() {
 
         <TodaysSpecial />
 
-        <section id="menu" className="px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <SectionTitle
-              eyebrow="Featured menu"
-              title="Stacked, sauced, ready."
-              description="Pick your craving, check what is available, and order straight on WhatsApp."
-            />
-            <div className="mb-8 flex flex-wrap justify-center gap-3">
-              {menuFilters.map((filter) => (
-                <button
-                  key={filter}
-                  type="button"
-                  onClick={() => setActiveFilter(filter)}
-                  className={`rounded-full border px-5 py-3 text-sm font-black uppercase tracking-[0.12em] transition ${
-                    activeFilter === filter
-                      ? "border-charcoal bg-charcoal text-white"
-                      : "border-charcoal/15 bg-white text-charcoal hover:border-chili hover:text-chili"
-                  }`}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredMenuItems.map((item, index) => (
-                <MenuCard key={item.name} item={item} index={index} />
-              ))}
-            </div>
-          </div>
-        </section>
+        <MenuExplorer variant="preview" onAddToCart={onCartOpen} />
 
         <PrintedMenu />
 
@@ -243,7 +239,9 @@ function PublicSite() {
         </section>
       </main>
       <Footer />
-      <FloatingWhatsApp />
+      <FloatingWhatsApp cartCount={cartCount} onCartOpen={onCartOpen} />
+      <InstallPrompt />
+      <OfflineNotice />
     </div>
   );
 }
